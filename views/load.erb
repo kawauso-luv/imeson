@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>loadsong</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- contact form created for treehouse competition.-->
+<form action="/load" method="post" id="imeson">
+  <div class="container">
+    <div class="head">
+      <h2>KASHI!!!</h2>
+    </div>
+    <textarea id="txt" type="text" name="songname" placeholder="song"></textarea><br />
+    <textarea id="txt" type="text" name="songtext" placeholder="lyric"></textarea><br />
+    <input type="submit" class="button" value="Search!">
+  </div>
+</form>
+
+<% if @songtext_api.size==3 %>
+<div class="usertextresult">
+    <p>likedislike:<%= @songtext_api[0] %></p><br>
+    <p>joysad:<%= @songtext_api[1] %></p><br>
+    <p>angerfear:<%= @songtext_api[2] %></p><br>
+  </div>
+  <% end %>
+  
+  <script>
+  // リロードなしページリセット
+  // const form = document.querySelector("#imeson");
+        
+  //       form.addEventListener("submit", async function(e) {
+  //         e.preventDefault();
+          
+  //         await fetch(form.action, {
+  //           method: "POST", 
+  //           body: new FormData(form)
+  //         })
+          
+  //         alert('yes!テスト用');
+  //         const imput = document.querySelector("#txt");
+  //         imput.value = "";
+          
+  //       })
+  
+  
+  //   $(function() {
+  //   // validate
+  //   $("#imeson").validate({
+  //       // Set the validation rules
+  //       rules: {
+  //           message: "required",
+  //       },
+  //       // Specify the validation error messages
+  //       messages: {
+  //           message: "empty",
+  //       }
+        
+  //   });
+  // });
+  </script>
+  
+</body>
+</html>

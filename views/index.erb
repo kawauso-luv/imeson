@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>感情分析</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- contact form created for treehouse competition.-->
+<form action="/search" method="post" id="imeson">
+  <div class="container">
+    <div class="head">
+      <h2>KANJOUBUNSEKI</h2>
+    </div>
+    <textarea id="txt" type="text" name="usertext" placeholder="character"></textarea><br />
+    <input type="submit" class="button" value="Search!">
+  </div>
+</form>
+
+<% if @usertext_api.size==3 %>
+<div class="usertextresult">
+    <p>likedislike:<%= @usertext_api[0] %></p>
+    <p>joysad:<%= @usertext_api[1] %></p>
+    <p>angerfear:<%= @usertext_api[2] %></p><br>
+    <div class="container">
+    <p>近しい曲：<%= @song %></p>
+    <!--<h3>歌詞</h3>-->
+    <!--<p><%= @lyric %>"></p>-->
+    </div>
+  </div>
+  <% end %>
+  
+  <script>
+  // リロードなしページリセット
+  // const form = document.querySelector("#imeson");
+        
+  //       form.addEventListener("submit", async function(e) {
+  //         e.preventDefault();
+          
+  //         await fetch(form.action, {
+  //           method: "POST", 
+  //           body: new FormData(form)
+  //         })
+          
+  //         alert('yes!テスト用');
+  //         const imput = document.querySelector("#txt");
+  //         imput.value = "";
+          
+  //       })
+  
+  
+  //   $(function() {
+  //   // validate
+  //   $("#imeson").validate({
+  //       // Set the validation rules
+  //       rules: {
+  //           message: "required",
+  //       },
+  //       // Specify the validation error messages
+  //       messages: {
+  //           message: "empty",
+  //       }
+        
+  //   });
+  // });
+  </script>
+  
+</body>
+</html>
