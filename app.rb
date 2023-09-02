@@ -49,7 +49,8 @@ def get_lyrics(path)
     
 end
 
-def is_japaanese(text) #歌詞が日本語か判定
+#歌詞が日本語か判定
+def is_japaanese(text) 
     "#{text}" =~ /(?:\p{Hiragana})/
 end
 
@@ -203,11 +204,59 @@ get '/test' do
             sleep 1
         end
         
-        #もしもうDBに登録されていなかったら　条件つける
-        
-        #@uta = Lyricdata.create(song: $songname, bpm: $bpm, artist: $artist_name, genre: $genre, lyric: $lyrics)
-        
-        # p "~~~~"
+        #もしまだDBに登録されていなかったら
+        # if Lyricdata.find_by(song: $songname, artist: $artist_name).nil?
+            # レコードが存在しない場合の処理
+            utf8 = $lyrics.force_encoding(Encoding::SJIS)
+            
+            #感情分析API
+            uri = URI("http://ap.mextractr.net/ma9/emotion_analyzer")
+            uri.query = URI.encode_www_form({
+            :out => "json",
+            :apikey => "E58B9066EE453F552DBD81B5A4D56677E3EAD7FB",
+            :text => utf8
+            })
+            response = Net::HTTP.get_response(uri)
+            json = JSON.parse(response.body)
+            
+            p "res: #{json.to_json}"
+            
+            
+            # @kanzyou_api = Faraday.new(:url => "http://ap.mextractr.net/ma9/")
+            # res = @kanzyou_api.get 'emotion_analyzeremotion_analyzer?out=json&apikey=E58B9066EE453F552DBD81B5A4D56677E3EAD7FB&text=%E3%81%82%E3%82%8A%E3%81%8C%E3%81%A8%E3%81%86%EF%BC%81%E3%81%82%E3%82%8A%E3%81%8C%E3%81%A8%E3%81%86%EF%BC%81%E3%81%86%E3%82%8C%E3%81%97%E3%81%84%EF%BC%81%EF%BC%81%EF%BC%81%EF%BC%81'
+            # body = JSON.parse(res.body)
+            
+            # p "body: #{body}"
+            
+            
+            # Nokogiriを使用してXMLをパース
+            # doc = Nokogiri::XML(response.body)
+
+            # # パースしたXMLをハッシュに変換
+            # xml_hash = {}
+            
+            # p "doc: #{doc}"
+            # doc.root.elements.each do |element|
+            #   xml_hash[element.name] = element.text
+            # end
+            
+            # # ハッシュをJSONに変換
+            # json_response = JSON.generate(xml_hash)
+            
+            # # JSONレスポンスを出力
+            # puts json_response
+            
+            
+            # @songtext_api=[]
+            # @songtext_api[0] = json["likedislike"]
+            # @songtext_api[1] = json["joysad"]
+            # @songtext_api[2] = json["angerfear"]
+    
+            # @uta = Lyricdata.create(song: $songname, bpm: $bpm, artist: $artist_name, genre: $genre, lyric: $lyrics, likedislike: @songtext_api[0], joysad: @songtext_api[1], angerfear: @songtext_api[2])
+            # p @uta
+        # else
+            # p Lyricdata.find_by(song: $songname,artist: $artist_name)
+        # end
     }
     
 =begin
