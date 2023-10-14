@@ -16,6 +16,18 @@ body {
   border: 2px solid #F9CE00;
   background-color:#00818A;
 }
+
+.container-blue{
+  max-width:600px;
+  margin:0 auto;
+  text-align:center;
+  -webkit-border-radius:6px;
+  -moz-border-radius:6px;
+  border-radius:6px;
+  border: 2px solid #09194F;
+  background-color:#00818A;
+}
+
 .head {
   color:#FDFDEB;
 }
@@ -71,6 +83,7 @@ input, textarea {
   -webkit-transition: .5s;
   transition: .5s;
   display: inline-block;
+  text-align: center;
   cursor: pointer;
   width:30%;
   color:#00818A;
@@ -129,4 +142,48 @@ label.error {
 .usertextresult {
   text-align:center;
   color:#FDFDEB;
+}
+
+.card{
+  width: 200px;
+  height: 30px;
+  color:#fff;
+  border: 2px solid #fff; 
+  -webkit-border-radius:6px;
+  -moz-border-radius:6px;
+  border-radius:6px;
+  padding: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  line-height: 30px;
+  background-color:#00818A;
+  float: none;
+  display: inline-block;
+}
+
+/* タブレット用のスタイル（幅が768px未満の場合） */
+@media (max-width: 767px) {
+  .card {
+    width: 150px; /* タブレット用の幅 */
+    height: 75px; /* タブレット用の高さ */
+    margin-right: 5px; /* タブレット用のカード間の余白 */
+  }
+}
+
+/* スマートフォン用のスタイル（幅が576px未満の場合） */
+@media (max-width: 575px) {
+  .card {
+    width: 80%; /* 幅を100%に設定して横幅いっぱいに表示 */
+    height: auto; /* 高さを自動調整してコンテンツに合わせる */
+    margin-right: 0; /* カード間の余白を解除 */
+  }
+}
+
+.center{
+  text-align: center;
+}
+
+.link{
+  color:#F9CE00;
 }

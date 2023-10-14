@@ -8,6 +8,7 @@ require 'sinatra/activerecord'
 require './models'
 require 'rspotify'
 
+#EmoTune
 
 # 歌詞検索API
 def search_songs(q)
@@ -27,6 +28,8 @@ def search_songs(q)
         next if song["result"]["artist_names"] == "Genius Japan"
         result.push(song["result"])
     end
+    
+    result
 end
 
 def get_lyrics(path)
@@ -39,8 +42,6 @@ def get_lyrics(path)
     doc = Nokogiri::HTML(response.body)
     
     div = doc.css(".Lyrics__Container-sc-1ynbvzw-1.kUgSbL")
-
-    # p "div: #{div}"
     
     div.search(:b).map &:remove
     div.inner_text.gsub(/\[.*?\]/,"")
@@ -116,13 +117,7 @@ get '/test' do
     
     #spotifyのプレイリストより曲データ取得
     a = RSpotify::Playlist.find_by_id('5TrSRWLRbWKcZyB8LgcpFr') 
-    # 現在とりあえずプレイリスト　
-    #日本top50[37i9dQZEVXbKXQ4mDTEBXq], 
-    #thisis米津[37i9dQZF1DWYoL6ZoD9KnI]
-    #thisis椎名林檎[37i9dQZF1DXcx4YctJCA7X]
-    #ボカロ[2nZdwEso65CYx84J0h2urc]
-    #邦楽ロック[3XEEYBPQyeuqKViHanBiW6]
-    #とりあえずの10曲[5TrSRWLRbWKcZyB8LgcpFr]
+    #とりあえずの10曲プレイリスト[5TrSRWLRbWKcZyB8LgcpFr]
     
     
     a.tracks(limit: 10).each{|var|
@@ -145,7 +140,6 @@ get '/test' do
         songs.each do |s|
             $lyrics = get_lyrics(s["path"])
             if is_japaanese($lyrics)
-                #puts "lyrics: #{$lyrics}"
                 break
             end
             sleep 1
@@ -175,8 +169,6 @@ get '/test' do
             @songtext_api[0] = json["likedislike"]
             @songtext_api[1] = json["joysad"]
             @songtext_api[2] = json["angerfear"]
-            
-            # p "res: #{json.to_json}"
             
             @uta.likedislike = @songtext_api[0]
             @uta.joysad = @songtext_api[1]

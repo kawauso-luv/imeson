@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>感情分析</title>
+    <title>EmoTune</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -10,22 +10,25 @@
 <form action="/search" method="post" id="imeson">
   <div class="container">
     <div class="head">
-      <h2>KANJOUBUNSEKI</h2>
+      <h2>EMOTUNE</h2>
+      <p class="center">入力した文章を感情分析し、結果と一番近い曲を提示します。</p>
     </div>
-    <textarea id="txt" type="text" name="usertext" placeholder="character"></textarea><br />
+    <textarea id="txt" type="text" name="usertext" placeholder="type here"></textarea><br />
     <input type="submit" class="button" value="Search!">
   </div>
 </form>
 
 <% if @usertext_api.size==3 %>
 <div class="usertextresult">
-    <p>likedislike:<%= @usertext_api[0] %></p>
-    <p>joysad:<%= @usertext_api[1] %></p>
-    <p>angerfear:<%= @usertext_api[2] %></p><br>
-    <div class="container">
-    <p>近しい曲：<%= @song %></p>
-    <!--<h3>歌詞</h3>-->
-    <!--<p><%= @lyric %>"></p>-->
+  <h3>感情分析結果</h3>
+    <div class="card">like(+) / dislike(-) :<%= @usertext_api[0] %></div>
+    <div class="card">joy(+) / sad(-) :<%= @usertext_api[1] %></div>
+    <div class="card">anger(+) / fear(-) :<%= @usertext_api[2] %></div>
+  <h2>近しい曲</h2>  
+  <div class="container">
+    <p><%= @artist %>「<%= @song %>」</p>
+    <h3>歌詞</h3>
+    <p><%= @lyric %> ...<a href="https://www.google.com/search?q=<%= @artist %>+<%= @song %>+%E6%AD%8C%E8%A9%9E"target="_blank" rel="noopener noreferrer" class="link">歌詞全文</a></p>
     </div>
   </div>
   <% end %>
@@ -64,6 +67,9 @@
   //   });
   // });
   </script>
-  
+  <br>
+  <div class="center">
+    <button onclick="location.href='/songlist'" class="button">収録曲一覧</button>
+  </div>
 </body>
 </html>

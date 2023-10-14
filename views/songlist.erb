@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>songlist</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  
+  <ul>
+    <% @songs.each do |i| %>
+      <li class="head"><%= i.song %></li>
+    <% end %>
+  </ul>
+  <div class="center">
+    <button onclick="location.href='/'" class="button">戻る</button>
+  </div>
+  
+</body>
+</html>
