@@ -2,7 +2,9 @@
 /*送信画面*/
 body {
   padding-top:25px;
-  background-color:#00818A;
+  /*background-color:#00818A;*/
+  background: rgb(0,94,99);
+background: linear-gradient(90deg, rgba(0,94,99,1) 0%, rgba(0,110,118,1) 35%, rgba(0,124,133,1) 86%, rgba(2,137,143,1) 100%);
   margin-left:10px;
   margin-right:10px;
 }
@@ -15,6 +17,7 @@ body {
   border-radius:6px;
   border: 2px solid #F9CE00;
   background-color:#00818A;
+  box-shadow: 0 10px 25px 0 rgba(0, 0, 0, .5);
 }
 
 .container-blue{

@@ -116,11 +116,16 @@ get '/test' do
     RSpotify.authenticate'21cd065fe0e8418dbebe103151465573','e2d37f287961402fbad6c84fcade2a63'
     
     #spotifyのプレイリストより曲データ取得
-    a = RSpotify::Playlist.find_by_id('5TrSRWLRbWKcZyB8LgcpFr') 
+    a = RSpotify::Playlist.find_by_id('37i9dQZF1DXdbRLJPSmnyq') 
+    genre = a.name
+    p genre
+    genre = "JPOP" if genre =~ /JPOP|J-pop/i
+    genre = "JROCK" if genre =~ /JROCK|J-rock/i
+    p genre
     #とりあえずの10曲プレイリスト[5TrSRWLRbWKcZyB8LgcpFr]
     
     
-    a.tracks(limit: 10).each{|var|
+    a.tracks(limit: 5).each{|var|
         name = var.name()
         song = RSpotify::Track.search(name,market:'JP').first
         #曲の名前
@@ -131,9 +136,12 @@ get '/test' do
         #曲のジャンル→曲をつくったアーティストを取得→アーティストのジャンルを登録
         $artist_name = song.artists.first.name
         p $artist_name
-        genre_tmp = RSpotify::Artist.search($artist_name).first
-        $genre = genre_tmp.genres
+        
+        $genre = genre
+        
+        
         p $genre
+        
         
         #歌詞検索
         songs = search_songs($songname+" "+$artist_name)
@@ -142,40 +150,49 @@ get '/test' do
             if is_japaanese($lyrics)
                 break
             end
-            sleep 1
         end
         
         p $artist_name
         
         #もしまだDBに登録されていなかったら
-        if Lyricdata.find_by(song: $songname, artist: $artist_name).nil?
+        # if Lyricdata.find_by(song: $songname, artist: $artist_name).nil?
+        #     #レコードが存在しない場合の処理
+            
+        #     #DBに登録
+        #     @uta = Lyricdata.create(song: $songname, bpm: $bpm, artist: $artist_name, genre: $genre, lyric: $lyrics)
+
+        #     $utf8 = @uta.lyric
+            
+        #     #感情分析API
+        #     uri = URI("http://ap.mextractr.net/ma9/emotion_analyzer")
+        #     uri.query = URI.encode_www_form({
+        #     :out => "json",
+        #     :apikey => "E58B9066EE453F552DBD81B5A4D56677E3EAD7FB",
+        #     :text => $utf8
+        #     })
+        #     response = Net::HTTP.get_response(uri)
+        #     json = JSON.parse(response.body)
+        #     @songtext_api=[]
+        #     @songtext_api[0] = json["likedislike"]
+        #     @songtext_api[1] = json["joysad"]
+        #     @songtext_api[2] = json["angerfear"]
+            
+        #     @uta.likedislike = @songtext_api[0]
+        #     @uta.joysad = @songtext_api[1]
+        #     @uta.angerfear = @songtext_api[2]
+        #     @uta.save
+        
+        # end
+        
+        if Genretable.find_by(song: $songname, genre: $genre ).nil?
             #レコードが存在しない場合の処理
             
+            aaa= Lyricdata.find_by(song: $songname, artist: $artist_name).id
+            
             #DBに登録
-            @uta = Lyricdata.create(song: $songname, bpm: $bpm, artist: $artist_name, genre: $genre, lyric: $lyrics)
+            Genretable.create(song: $songname, songid: aaa, genre: $genre)
+        end    
 
-            $utf8 = @uta.lyric
-            
-            #感情分析API
-            uri = URI("http://ap.mextractr.net/ma9/emotion_analyzer")
-            uri.query = URI.encode_www_form({
-            :out => "json",
-            :apikey => "E58B9066EE453F552DBD81B5A4D56677E3EAD7FB",
-            :text => $utf8
-            })
-            response = Net::HTTP.get_response(uri)
-            json = JSON.parse(response.body)
-            @songtext_api=[]
-            @songtext_api[0] = json["likedislike"]
-            @songtext_api[1] = json["joysad"]
-            @songtext_api[2] = json["angerfear"]
-            
-            @uta.likedislike = @songtext_api[0]
-            @uta.joysad = @songtext_api[1]
-            @uta.angerfear = @songtext_api[2]
-            @uta.save
-        
-        end
     }
     redirect '/'
     

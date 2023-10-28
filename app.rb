@@ -148,7 +148,7 @@ get '/test' do
                 #puts "lyrics: #{$lyrics}"
                 break
             end
-            sleep 1
+            #sleep 1
         end
         
         p $artist_name
