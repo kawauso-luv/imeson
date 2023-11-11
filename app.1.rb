@@ -88,8 +88,8 @@ post '/search' do
         like = i.likedislike.to_f - @usertext_api[0].to_f
         joy = i.joysad.to_f - @usertext_api[1].to_f
         ang = i.angerfear.to_f - @usertext_api[2].to_f
-        result = like+joy+ang
-        result = result.abs
+        result = like**2 + joy**2 + ang**2
+        result = sqrt(result)
         p result
         if min > result
             min = result.abs
