@@ -15,15 +15,22 @@ ActiveRecord::Schema.define(version: 2023_08_19_101933) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "genredata", force: :cascade do |t|
+    t.integer "lyricdata_id"
+    t.string "genre"
+  end
+
   create_table "lyricdata", force: :cascade do |t|
     t.string "song"
     t.string "artist"
     t.string "lyric"
-    t.string "genre"
     t.float "bpm"
     t.float "likedislike"
     t.float "joysad"
     t.float "angerfear"
+    t.float "valence"
+    t.float "energy"
+    t.float "danceability"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

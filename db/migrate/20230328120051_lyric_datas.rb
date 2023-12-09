@@ -4,11 +4,13 @@ class LyricDatas < ActiveRecord::Migration[6.1]
       t.string :song
       t.string :artist
       t.string :lyric
-      t.string :genre
       t.float :bpm
       t.float :likedislike
       t.float :joysad
       t.float :angerfear
+      t.float :valence
+      t.float :energy
+      t.float :danceability
       t.timestamps null: false
     end
   end

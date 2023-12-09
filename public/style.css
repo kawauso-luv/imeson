@@ -75,6 +75,12 @@ input, textarea {
 :-ms-input-placeholder {  
    color: #00818A;  
 }
+
+.radio{
+  padding: 0;
+  width:5%;
+}
+
 .button {
   margin-top:15px;
   margin-bottom:25px;
@@ -96,6 +102,9 @@ input, textarea {
 .button:hover {
   background:#09194F;
   color:#F9CE00;
+}
+label{
+  color:#fff;
 }
 label.error {
     font-family:'Source Sans Pro',arial,sans-serif;

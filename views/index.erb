@@ -7,16 +7,21 @@
 </head>
 <body>
   <!-- contact form created for treehouse competition.-->
+<div class="container">
 <form action="/search" method="post" id="imeson">
-  <div class="container">
     <div class="head">
       <h2>EMOTUNE</h2>
       <p class="center">入力した文章を感情分析し、結果と一番近い曲を提示します。</p>
     </div>
-    <textarea id="txt" type="text" name="usertext" placeholder="type here"></textarea><br />
+    <textarea id="txt" type="text" name="usertext" placeholder="type here"></textarea><br>
+    <input type="radio" class="radio" name="genre" value="JPOP" id="Jpop">
+    <label for="Jpop">J-pop</label>
+    <input type="radio" class="radio" name="genre" value="JROCK" id="Jrock">
+    <label for="Jrock">J-rock</label>
+    <br />
     <input type="submit" class="button" value="Search!">
-  </div>
 </form>
+</div>
 
 <% if @usertext_api.size==3 %>
 <div class="usertextresult">
