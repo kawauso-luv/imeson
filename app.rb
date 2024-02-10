@@ -7,86 +7,13 @@ require "nokogiri"
 require 'sinatra/activerecord'
 require './models'
 require 'rspotify'
+require "./lib/genius_api.rb"
+require "./lib/emotionanalyzer_api.rb"
 
 Dotenv.load
 
 #EmoTune
 
-# 歌詞検索API
-def search_songs(q)
-    uri = URI.parse("https://api.genius.com/search")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = uri.scheme === "https"
-    uri.query = URI.encode_www_form({:q=>q})
-    headers = { "Authorization" => "Bearer #{ENV["LYRIC_API"]}" }
-    response = http.get(uri, headers)
-    json = JSON.parse(response.body)
-    
-    
-    #result = []
-    #json["response"]["hits"].each do |song|
-    #    next unless song["index"] == "song"
-        #別アーティストの諸々を消す
-    #    next if song["result"]["artist_names"] == "Genius Japan"
-    #    result.push(song["result"])
-    #end
-    
-    #result
-    
-    
-    result = []
-    json["response"]["hits"].each do |song|
-        next unless song["index"] == "song"
-        #別アーティストの諸々を消す
-        next if song["result"]["artist_names"] == "Genius Japan"
-        result.push(song["result"]["id"])
-    end
-    
-    result
-end
-
-def get_lyrics(path)
-    uri = URI.parse("https://genius.com" + path)
-    p uri
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = uri.scheme === "https"
-    response = http.get(uri)
-    
-
-    doc = Nokogiri::HTML(response.body)
-    
-    div = doc.css(".Lyrics__Container-sc-1ynbvzw-1.kUgSbL")
-    
-    div.search(:b).map &:remove
-    div.inner_text.gsub(/\[.*?\]/,"")
-    
-end
-
-def get_content(q)
-    uri = URI.parse("https://api.genius.com/songs/" + q.to_s)
-    
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = uri.scheme === "https"
-    uri.query = URI.encode_www_form({:q=>q})
-    headers = { "Authorization" => "Bearer #{ENV["LYRIC_API"]}" }
-    response = http.get(uri, headers)
-    json = JSON.parse(response.body)
-    
-    
-    uri = URI.parse(json["response"]["song"]["url"])
-    
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = uri.scheme === "https"
-    response = http.get(uri)
-    
-
-    doc = Nokogiri::HTML(response.body)
-    
-    div = doc.css(".Lyrics__Container-sc-1ynbvzw-1.kUgSbL")
-    
-    div.search(:b).map &:remove
-    div.inner_text.gsub(/\[.*?\]/,"")
-end
 
 #歌詞が日本語か判定
 def is_japaanese(text) 
@@ -103,56 +30,14 @@ end
 
 post '/search' do
     usertext = params[:usertext]
-    # 感情分析API
-    uri = URI("http://ap.mextractr.net/ma9/emotion_analyzer")
-    uri.query = URI.encode_www_form({
-        :out => "json",
-        :apikey => ENV["FEELING_API_KEY"],
-        :text => usertext
-    })
-    response = Net::HTTP.get_response(uri)
-    json = JSON.parse(response.body)
-    @usertext_api=[]
-    @usertext_api[0] = json["likedislike"]
-    @usertext_api[1] = json["joysad"]
-    @usertext_api[2] = json["angerfear"]
-    
-    puts @usertext_api
-    
-    
-    #一番感情分析結果が近いものを見つける
     selected_genre = params[:genre]
-    selected_genre_song = Genredata.where(genre: selected_genre)
-    #likeが+で、angが絶対値0.5以下なら、valenceが0.7以上の曲から選ぶ
-    if @usertext_api[0].to_f>0 and @usertext_api[2].to_f<0.5
-        selected_genre_song.each do |i|
-            i = Lyricdata.find(i.lyricdata_id)
-            if i.valence == 0.7..1 
-                selected_genre_song.push(i)
-            end
-        end
-    end
-    if selected_genre_song == nil
-        selected_genre_song = Genredata
-    end
-    result = 0
-    min = 100000
-    selected_genre_song.each do |aaa|
-        i = Lyricdata.find(aaa.lyricdata_id)
-        like = i.likedislike.to_f - @usertext_api[0].to_f
-        joy = i.joysad.to_f - @usertext_api[1].to_f
-        ang = i.angerfear.to_f - @usertext_api[2].to_f
-        result = like**2 + joy**2 + ang**2
-        result = Math.sqrt(result)
-        p "~~~!!~~~!!"
-        p result
-        if min > result
-            min = result.abs
-            @artist = i.artist
-            @song = i.song
-            @lyric = i.lyric
-        end
-    end
+    # 感情分析API
+    data = EmotionanalyzerApi.analyze(usertext, selected_genre)
+    
+    @usertext_api = data[:usertext_api]
+    @artist = data[:artist]
+    @song = data[:song]
+    @lyric = data[:lyric]
     
     if !@lyric.nil? 
         @lyric = @lyric[0, 10]
@@ -172,7 +57,7 @@ get '/test' do
     RSpotify.authenticate ENV["SPOTIFY_API_1"],ENV["SPOTIFY_API_2"]
     
     #spotifyのプレイリストより曲データ取得
-    a = RSpotify::Playlist.find_by_id('5TrSRWLRbWKcZyB8LgcpFr') 
+    a = RSpotify::Playlist.find_by_id('6BSWS8yTdnBmZZ4BRXCATr') 
     genre = a.name
     p genre
     genre = "JPOP" if genre =~ /JPOP|J-pop|J-POP/i
@@ -181,7 +66,7 @@ get '/test' do
     #とりあえずの10曲プレイリスト[5TrSRWLRbWKcZyB8LgcpFr]
 
     
-    a.tracks(limit:10).each do |var|
+    a.tracks(limit:5).each do |var|
     #いったんfor文作る前に戻した　大丈夫なはず
     #tracks = a.tracks(limit: 5)
     #for song in tracks
@@ -213,12 +98,12 @@ get '/test' do
         
         
         #歌詞検索
-        songs = search_songs(songname+" "+artist_name)
+        songs = GeniusApi.search_songs(songname+" "+artist_name)
         songs.each do |s|
         if s.nil?
         else
             #$lyrics = get_lyrics(s["path"])
-            $lyrics = get_content(s)
+            $lyrics = GeniusApi.get_content(s)
             puts "~~~~#{$lyrics}~~~~~~~~~"
             
             if is_japaanese($lyrics)
