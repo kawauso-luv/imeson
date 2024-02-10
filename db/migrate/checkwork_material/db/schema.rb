@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_19_101933) do
+ActiveRecord::Schema.define(version: 2017_06_30_064736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,26 +19,6 @@ ActiveRecord::Schema.define(version: 2023_08_19_101933) do
     t.integer "number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "genredata", force: :cascade do |t|
-    t.integer "lyricdata_id"
-    t.string "genre"
-  end
-
-  create_table "lyricdata", force: :cascade do |t|
-    t.string "song"
-    t.string "artist"
-    t.string "lyric"
-    t.float "bpm"
-    t.float "likedislike"
-    t.float "joysad"
-    t.float "angerfear"
-    t.float "valence"
-    t.float "energy"
-    t.float "danceability"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
 end

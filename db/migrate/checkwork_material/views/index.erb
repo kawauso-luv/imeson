@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>最寄駅検索</title>
+  <link rel="stylesheet" href="/assets/css/count.css">
+</head>
+
+<body>
+  <script>
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(sendPosition);
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }
+
+  function sendPosition(position) {
+    fetch('/location', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      })
+    }).then(function(response) {
+      return response.text();
+    }).then(function(body) {
+      document.body.innerHTML = body;
+    });
+  }
+</script>
+<button onclick="getLocation()">Get Location</button>
+<!--ここまではAjaxと緯度経度取得です。一旦無視で。buttonを押すと post'/location'にとびます-->
+<p>現在地における最寄駅は<%= @station %>です</p></p>
+</body>
+</html>
