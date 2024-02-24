@@ -42,9 +42,44 @@ class GeniusApi
             
             div = doc.css(".Lyrics__Container-sc-1ynbvzw-1.kUgSbL")
             
+            if div.empty?
+                return nil # 歌詞が見つからない場合はnilを返す
+            end
+            
             div.search(:b).map &:remove
             div.inner_text.gsub(/\[.*?\]/,"")
         end
+        
+        
+        
+        
+        
+        
+        # def content_lyrics(q)   
+        #     div = q.css(".Lyrics__Container-sc-1ynbvzw-1.kUgSbL")
+            
+        #     if div.empty?
+        #         return nil # 歌詞が見つからない場合はnilを返す
+        #     end
+            
+        #     div.search(:b).map &:remove
+        #     div.inner_text.gsub(/\[.*?\]/,"")
+            
+        #     return div
+        # end
+        
+        # def content_title(q, name)   
+        #     title = q.css(".SongHeaderdesktop__HiddenMask-sc-1effuo1-11.iMpFIj")
+            
+        #     titletf = title.include?(name)
+            
+        #     if title.empty?
+        #         return nil
+        #     end
+            
+        #     return titletf
+        # end
+        
         
     end 
 end

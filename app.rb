@@ -57,7 +57,7 @@ get '/test' do
     RSpotify.authenticate ENV["SPOTIFY_API_1"],ENV["SPOTIFY_API_2"]
     
     #spotifyのプレイリストより曲データ取得
-    a = RSpotify::Playlist.find_by_id('6BSWS8yTdnBmZZ4BRXCATr') 
+    a = RSpotify::Playlist.find_by_id('2CmfNZ3ZBXrB9vdLcZUcqX') 
     genre = a.name
     p genre
     genre = "JPOP" if genre =~ /JPOP|J-pop|J-POP/i
@@ -65,42 +65,43 @@ get '/test' do
     p genre
     #とりあえずの10曲プレイリスト[5TrSRWLRbWKcZyB8LgcpFr]
 
-    
     a.tracks(limit:5).each do |var|
-    #いったんfor文作る前に戻した　大丈夫なはず
+    #いったんfor文作る前に戻した大丈夫なはず
     #tracks = a.tracks(limit: 5)
     #for song in tracks
-        name = var.name()
-        song = RSpotify::Track.search(name, market:'JP').first
-        #曲の名前
+        id = var.id
+        song = RSpotify::Track.find(id)
         songname = song.name
-        #p songname
         bpm = song.audio_features.tempo
-        #p bpm
         #曲のジャンル→曲をつくったアーティストを取得→アーティストのジャンルを登録
         artist_name = song.artists.first.name
-        #p artist_name
+        
         
         #spotifyのパラメータたち
-        #p "-------------------"
         #ダンスしやすさ +:1.0, -:0.0
         danceability = song.audio_features.danceability
         #エネルギー +:1.0, -:0.0
         energy = song.audio_features.energy
         #曲が伝える音楽のポジティブ性を表す0.0から1.0の尺度。この指数の高い値の曲はより陽性,低い指数の曲はより陰性
         valence = song.audio_features.valence
-        #p "~~~~~~~~~~~~~~~~~~~~"
         
         genre = genre
         
         
-        #p genre
-        
         
         #歌詞検索
-        songs = GeniusApi.search_songs(songname+" "+artist_name)
+        content = GeniusApi.search_songs(songname+" "+artist_name)
+        p content
+        title = GeniusApi.content_title(content, songname)
+        p title.to_s
+        if title==true
+            songs = GeniusApi.content_lyrics(content)
+        end
+        
         songs.each do |s|
         if s.nil?
+            $lyrics = nil
+            next
         else
             #$lyrics = get_lyrics(s["path"])
             $lyrics = GeniusApi.get_content(s)
@@ -114,12 +115,8 @@ get '/test' do
                 next
             end
         end
-            # if @jap == true
-            #     break
-            # end    
         end
         
-        #p artist_name
         
         #もしまだDBに登録されていなかったら
         if Lyricdata.find_by(song: songname, artist: artist_name).nil?
@@ -139,6 +136,7 @@ get '/test' do
             :text => utf8
             })
             response = Net::HTTP.get_response(uri)
+            p response.body
             json = JSON.parse(response.body)
             @songtext_api=[]
             @songtext_api[0] = json["likedislike"]
@@ -163,7 +161,6 @@ get '/test' do
             #DBに登録
             Genredata.create(lyricdata_id: targetsong.id, genre: genre)
         end    
-    # end
     end
     redirect '/'
     
