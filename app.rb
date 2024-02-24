@@ -90,13 +90,14 @@ get '/test' do
         
         
         #歌詞検索
-        content = GeniusApi.search_songs(songname+" "+artist_name)
-        p content
-        title = GeniusApi.content_title(content, songname)
-        p title.to_s
-        if title==true
-            songs = GeniusApi.content_lyrics(content)
-        end
+        # content = GeniusApi.search_songs(songname+" "+artist_name)
+        # p content
+        # title = GeniusApi.content_title(content, songname)
+        # p title.to_s
+        # if title==true
+        #     songs = GeniusApi.content_lyrics(content)
+        # end
+        songs = GeniusApi.search_songs(songname+" "+artist_name)
         
         songs.each do |s|
         if s.nil?
