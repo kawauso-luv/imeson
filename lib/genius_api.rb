@@ -41,6 +41,7 @@ class GeniusApi
             doc = Nokogiri::HTML(response.body)
             
             div = doc.css(".Lyrics__Container-sc-1ynbvzw-1.kUgSbL")
+            #div = doc.css("span.SongHeaderdesktop__HiddenMask-sc-1effuo1-11.iMpFIj")
             
             if div.empty?
                 return nil # 歌詞が見つからない場合はnilを返す
@@ -69,7 +70,7 @@ class GeniusApi
         # end
         
         # def content_title(q, name)   
-        #     title = q.css(".SongHeaderdesktop__HiddenMask-sc-1effuo1-11.iMpFIj")
+        #     title = q.css("span.SongHeaderdesktop__HiddenMask-sc-1effuo1-11.iMpFIj")
             
         #     titletf = title.include?(name)
             
